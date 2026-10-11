@@ -3,16 +3,18 @@
   uv run python experiments.py            # everything (skips trained/exported artifacts that exist)
   uv run python experiments.py bench      # re-bench only
 """
-import json, shutil, sys, time
+import argparse, json, shutil, time
 from pathlib import Path
 
 import cv2, numpy as np, onnxruntime as ort
 from ultralytics import YOLO
+from train import select_device
 
 ML = Path(__file__).resolve().parent
 DATA = ML / "data" / "uno.yaml"
 OUT = ML / "runs" / "exp"
 BASE = ML / "runs" / "uno" / "weights" / "best.pt"
+DEVICE = "auto"
 AUG = dict(fliplr=0.0, flipud=0.0, hsv_h=0.0, hsv_s=0.4, hsv_v=0.3, mosaic=1.0, close_mosaic=2, degrees=0, scale=0.4)
 
 # name: (init weights/cfg, imgsz, epochs or 0 = no training)
@@ -38,9 +40,10 @@ def weights(name):
         return w
     log(f"TRAIN {name} imgsz={imgsz} epochs={epochs}")
     m = YOLO(str(init))
-    m.add_callback("on_pretrain_routine_start", lambda t: setattr(t.args, "workers", 8))
+    if select_device(DEVICE) == "mps":
+        m.add_callback("on_pretrain_routine_start", lambda t: setattr(t.args, "workers", 8))
     m.add_callback("on_fit_epoch_end", lambda t: log(f"EPOCH {name} {t.epoch + 1}/{epochs} mAP50-95={t.metrics.get('metrics/mAP50-95(B)', 0):.4f}"))
-    m.train(data=str(DATA), imgsz=imgsz, epochs=epochs, batch=64, device="mps", workers=8, project=str(ML / "runs"),
+    m.train(data=str(DATA), imgsz=imgsz, epochs=epochs, batch=64, device=select_device(DEVICE), workers=8, project=str(ML / "runs"),
             name=f"exp_{name}", exist_ok=True, plots=False, lr0=0.002 if init == BASE else 0.01, **AUG)
     return w
 
@@ -110,8 +113,15 @@ def bench():
 
 
 if __name__ == "__main__":
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("stage", nargs="?", choices=["all", "bench"], default="all")
+    ap.add_argument("--device", default="auto")
+    args = ap.parse_args()
+    DEVICE = args.device
+    if not BASE.exists() or not DATA.exists():
+        ap.error("Base weights or dataset missing. Follow ml/README.md before running the sweep.")
     OUT.mkdir(parents=True, exist_ok=True)
-    if sys.argv[1:] != ["bench"]:
+    if args.stage != "bench":
         for n in CANDIDATES:
             weights(n)
     bench()

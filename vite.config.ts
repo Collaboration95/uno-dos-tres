@@ -87,7 +87,7 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: ['.trycloudflare.com'],
     https: certs,
-    // cross-origin isolation => SharedArrayBuffer => multi-threaded wasm fallback
+    // Keep the worker/runtime cross-origin isolated; inference deliberately uses one WASM thread.
     headers: { 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Embedder-Policy': 'require-corp' },
   },
   optimizeDeps: { exclude: ['onnxruntime-web'] },

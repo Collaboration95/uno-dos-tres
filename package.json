@@ -2,12 +2,17 @@
   "name": "uno-dos-tres",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
   "scripts": {
     "cards": "node scripts/gen-cards.mjs",
     "certs": "node scripts/certs.mjs",
     "predev": "node scripts/certs.mjs && node scripts/copy-ort.mjs",
     "dev": "vite",
     "demo": "node scripts/demo.mjs",
+    "check": "tsc --noEmit",
+    "test": "node src/cam/tracker.test.ts && node --test scripts/demo.test.mjs",
     "build": "node scripts/copy-ort.mjs && vite build"
   },
   "devDependencies": {
