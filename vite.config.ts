@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
@@ -46,6 +47,14 @@ function relay(): Plugin {
         res.setHeader('content-type', file.endsWith('.wasm') ? 'application/wasm' : 'text/javascript');
         res.setHeader('cross-origin-resource-policy', 'same-origin');
         res.end(readFileSync(file));
+      });
+      // iOS WebKit refuses wss:// to an untrusted cert even after the page warning is accepted,
+      // so the phone must install + trust the mkcert root CA once: open /ca on the phone.
+      server.middlewares.use('/ca', (_req, res) => {
+        const root = execFileSync('mkcert', ['-CAROOT'], { encoding: 'utf8' }).trim();
+        res.setHeader('content-type', 'application/x-x509-ca-cert');
+        res.setHeader('content-disposition', 'attachment; filename="uno-dev-ca.pem"');
+        res.end(readFileSync(resolve(root, 'rootCA.pem')));
       });
       server.middlewares.use('/api/info', (_req, res) => {
         const port = server.config.server.port ?? 5173;
