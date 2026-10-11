@@ -20,6 +20,15 @@ function relay(): Plugin {
         const msg = JSON.stringify({ type: 'peers', peers: p });
         roles.forEach((_, ws) => ws.send(msg));
       };
+      server.httpServer?.once('listening', () => {
+        const port = server.config.server.port ?? 5173;
+        const base = `https://${lanIPs()[0] ?? 'localhost'}:${port}`;
+        setTimeout(() => {
+          console.log(`\n  ▶ Host (open this):  https://localhost:${port}/`);
+          console.log(`  ▶ Deck:             https://localhost:${port}/deck.html`);
+          console.log(`  ▶ Phone (LAN):      ${base}/cam.html   (or scan the QR on the host page)\n`);
+        }, 100); // after Vite's own banner
+      });
       server.httpServer?.on('upgrade', (req, socket, head) => {
         const url = new URL(req.url ?? '', 'http://x');
         if (url.pathname !== '/relay') return; // leave Vite HMR alone
@@ -42,8 +51,8 @@ function relay(): Plugin {
       });
       // ORT dynamically imports its .mjs glue from /ort/; Vite refuses imports from /public in dev, so serve raw.
       server.middlewares.use('/ort', (req, res, next) => {
-        const file = resolve(__dirname, 'public/ort', (req.url ?? '').split('?')[0].replace(/^\/+/, ''));
-        if (!file.startsWith(resolve(__dirname, 'public/ort')) || !existsSync(file)) return next();
+        const file = resolve(import.meta.dirname, 'public/ort', (req.url ?? '').split('?')[0].replace(/^\/+/, ''));
+        if (!file.startsWith(resolve(import.meta.dirname, 'public/ort')) || !existsSync(file)) return next();
         res.setHeader('content-type', file.endsWith('.wasm') ? 'application/wasm' : 'text/javascript');
         res.setHeader('cross-origin-resource-policy', 'same-origin');
         res.end(readFileSync(file));
@@ -85,9 +94,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        host: resolve(__dirname, 'index.html'),
-        deck: resolve(__dirname, 'deck.html'),
-        cam: resolve(__dirname, 'cam.html'),
+        host: resolve(import.meta.dirname, 'index.html'),
+        deck: resolve(import.meta.dirname, 'deck.html'),
+        cam: resolve(import.meta.dirname, 'cam.html'),
       },
     },
   },
