@@ -59,7 +59,8 @@ function relay(): Plugin {
       server.middlewares.use('/api/info', (_req, res) => {
         const port = server.config.server.port ?? 5173;
         res.setHeader('content-type', 'application/json');
-        res.end(JSON.stringify({ camUrls: lanIPs().map((ip) => `https://${ip}:${port}/cam.html`) }));
+        const tunnel = existsSync('.certs/tunnel-url') ? [`${readFileSync('.certs/tunnel-url', 'utf8').trim()}/cam.html`] : [];
+        res.end(JSON.stringify({ camUrls: [...tunnel, ...lanIPs().map((ip) => `https://${ip}:${port}/cam.html`)] }));
       });
     },
   };
@@ -75,6 +76,7 @@ export default defineConfig({
     host: true,
     port: 5173,
     strictPort: true,
+    allowedHosts: ['.trycloudflare.com'],
     https: certs,
     // cross-origin isolation => SharedArrayBuffer => multi-threaded wasm fallback
     headers: { 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Embedder-Policy': 'require-corp' },

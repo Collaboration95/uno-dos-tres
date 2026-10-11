@@ -14,6 +14,7 @@ const video = $<HTMLVideoElement>('v');
 const overlay = $<HTMLCanvasElement>('o');
 const hud = $('hud');
 const bannerEl = $('banner');
+const nowEl = $('now');
 const msgEl = $('msg');
 const startBtn = $<HTMLButtonElement>('start');
 const g = overlay.getContext('2d')!;
@@ -195,6 +196,12 @@ function onResult(m: Extract<FromWorker, { type: 'result' }>) {
     box: [(p.sx + d.box[0] * p.side) / p.vw, (p.sy + d.box[1] * p.side) / p.vh, (d.box[2] * p.side) / p.vw, (d.box[3] * p.side) / p.vh],
   }));
   lastDets = dets;
+
+  // Live "what I see right now": best detection, independent of the tracker's commit.
+  const best = dets.filter((d) => d.cls < CARDS.length).sort((a, b) => b.conf - a.conf)[0];
+  const card = best && CARDS[best.cls];
+  nowEl.textContent = card ? `${label(card)}  ${Math.round(best.conf * 100)}%` : '';
+  nowEl.style.color = card?.color ? COLOR_HEX[card.color] : '#fff';
 
   const commit = tracker.update(dets.filter((d) => d.cls < CARDS.length));
   if (commit) {
