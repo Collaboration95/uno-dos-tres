@@ -8,6 +8,7 @@ ml/data/
 ml/runs/
 ml/assets/cards/
 *.pt
-!ml/weights/*.pt
 __pycache__/
 public/ort/
+ml/weights/
+ml/*.log

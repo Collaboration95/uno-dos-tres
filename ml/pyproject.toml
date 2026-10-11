@@ -1,0 +1,13 @@
+[project]
+name = "uno-ml"
+version = "0.1.0"
+description = "Synthetic-data YOLO pipeline for Uno card recognition"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "ultralytics>=8.4",
+    "opencv-python-headless",
+    "numpy",
+    "onnx",
+    "onnxslim",
+    "onnxruntime",
+]
