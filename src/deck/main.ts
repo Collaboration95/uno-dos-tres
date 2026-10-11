@@ -170,6 +170,5 @@ speed.addEventListener('input', () => setSpeed(+speed.value));
 speed.addEventListener('change', () => speed.blur());
 
 setSpeed(interval);
-renderPile();
-poke();
+flip(); // start with a card on the pile
 void preloaded;
