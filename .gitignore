@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.certs/
+.DS_Store
+# ML
+ml/.venv/
+ml/data/
+ml/runs/
+ml/assets/cards/
+*.pt
+!ml/weights/*.pt
+__pycache__/
+public/ort/

@@ -1,0 +1,25 @@
+{
+  "name": "uno-dos-tres",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "cards": "node scripts/gen-cards.mjs",
+    "certs": "node scripts/certs.mjs",
+    "predev": "node scripts/certs.mjs && node scripts/copy-ort.mjs",
+    "dev": "vite",
+    "build": "node scripts/copy-ort.mjs && vite build"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "^26.6.5",
+    "@types/qrcode": "^1.5.6",
+    "@types/ws": "^8.18.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "ws": "^8.22.0"
+  },
+  "dependencies": {
+    "onnxruntime-web": "^1.30.0",
+    "qrcode": "^1.5.4"
+  }
+}

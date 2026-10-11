@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 360" width="240" height="360">
+<rect width="240" height="360" rx="20" fill="#fff"/><rect x="12" y="12" width="216" height="336" rx="14" fill="#1a1a1a"/>
+<ellipse cx="120" cy="180" rx="72" ry="132" transform="rotate(30 120 180)" fill="#D72600"/>
+<text x="120" y="202" text-anchor="middle" font-size="64" font-family="Arial Black, Arial, Helvetica, sans-serif" font-weight="900" font-style="italic" fill="#ECD407" stroke="#1a1a1a" stroke-width="4" paint-order="stroke" transform="rotate(-20 120 180)">UNO</text></svg>

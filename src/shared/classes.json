@@ -1,0 +1,6 @@
+{
+  "colors": ["red", "yellow", "green", "blue"],
+  "values": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "skip", "reverse", "draw2"],
+  "wilds": ["wild", "wild_draw4"],
+  "note": "Class id order: for each color, for each value -> `${color}_${value}` (52), then wilds (2). 54 total. ml/ reads this file too; never reorder."
+}
