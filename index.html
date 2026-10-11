@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Uno · Host</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">uno<i>·</i>dos<i>·</i>tres</div>
+      <div class="spacer"></div>
+      <span class="peer" id="peer-deck"><i></i>deck</span>
+      <button class="pill" id="conn-pill" type="button"><i></i><span id="conn-pill-text">Waiting for phone</span></button>
+    </header>
+
+    <main>
+      <section class="left">
+        <div class="feed" id="feed">
+          <canvas id="cv"></canvas>
+          <div class="idle" id="idle">Waiting for phone…</div>
+          <div class="conn" id="conn">
+            <div class="conn-card">
+              <img id="qr" alt="QR code" width="240" height="240" />
+              <div class="conn-side">
+                <h2>Scan with your phone</h2>
+                <a id="url-main" class="url"></a>
+                <div id="url-more" class="more"></div>
+                <p class="hint">Phone will warn about the certificate → <b>Show details</b> → <b>visit website</b></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="statsbar">
+          <div class="stat"><label>Phone FPS</label><b id="s-fps">–</b></div>
+          <div class="stat"><label>Inference</label><b id="s-ms">–</b></div>
+          <div class="stat"><label>Backend</label><b id="s-backend">–</b></div>
+          <div class="stat"><label>Peers</label><b id="s-peers">–</b></div>
+        </div>
+      </section>
+
+      <section class="right">
+        <div class="panel projector">
+          <h3>Projector</h3>
+          <div class="banner idle-b" id="banner">
+            <img id="b-thumb" alt="" />
+            <div class="b-body">
+              <div class="b-text" id="b-text">Waiting for the first card…</div>
+              <div class="b-sub" id="b-sub"></div>
+            </div>
+          </div>
+          <div class="turn">
+            <div class="chips" id="chips"></div>
+            <div class="dir" id="dir"></div>
+          </div>
+          <ul class="log" id="log"></ul>
+        </div>
+
+        <div class="panel accuracy">
+          <div class="acc-head">
+            <h3>Accuracy vs ground truth</h3>
+            <button id="reset" type="button">Reset</button>
+          </div>
+          <div class="acc-nums">
+            <div class="big"><b id="a-rate">–</b><label>hit rate</label></div>
+            <div class="num"><b id="a-med">–</b><label>median</label></div>
+            <div class="num"><b id="a-p90">–</b><label>p90</label></div>
+            <div class="num"><b id="a-hits">0</b><label>hits</label></div>
+            <div class="num"><b id="a-wrong">0</b><label>wrong</label></div>
+            <div class="num"><b id="a-miss">0</b><label>missed</label></div>
+          </div>
+          <div class="rows-head"><span>#</span><span>Truth</span><span>Detected</span><span>Latency</span></div>
+          <div class="rows" id="rows"></div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/host/main.ts"></script>
+  </body>
+</html>

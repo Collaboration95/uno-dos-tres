@@ -1,0 +1,131 @@
+/* The ML model was trained on synthetic scenes with this exact background. */
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  background: radial-gradient(ellipse at center, #0e3b2a 0%, #072418 100%);
+  font: 12px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+body.idle {
+  cursor: none;
+}
+
+#pile {
+  position: fixed;
+  inset: 0;
+}
+.card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 70vh;
+  aspect-ratio: 2 / 3;
+  filter: drop-shadow(0 1.2vh 2vh rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+}
+.card.pop {
+  animation: pop 60ms ease-out;
+}
+@keyframes pop {
+  from {
+    scale: 1.03;
+  }
+}
+
+#hint {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 18px;
+  pointer-events: none;
+}
+#hint.gone {
+  display: none;
+}
+kbd {
+  font: inherit;
+  padding: 1px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+#draw {
+  position: fixed;
+  left: 5vw;
+  top: 50%;
+  translate: 0 -50%;
+  text-align: center;
+  pointer-events: none;
+}
+#draw .stack {
+  height: 18vh;
+  aspect-ratio: 2 / 3;
+  box-shadow: 0.4vh 0.4vh 0 rgba(0, 0, 0, 0.35), 0.8vh 0.8vh 0 rgba(0, 0, 0, 0.25);
+  border-radius: 1vh;
+}
+#draw img {
+  height: 100%;
+  display: block;
+}
+#draw-count {
+  margin-top: 1.6vh;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+#hud {
+  position: fixed;
+  right: 14px;
+  bottom: 12px;
+  width: 250px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  transition: opacity 0.4s;
+  cursor: default;
+}
+#hud.show {
+  opacity: 0.8;
+  transition-duration: 0.05s;
+}
+#hud.hidden {
+  display: none;
+}
+#hud .row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+#hud .dim,
+#hud .keys {
+  color: rgba(255, 255, 255, 0.55);
+}
+#hud .keys {
+  margin-top: 4px;
+  font-size: 10.5px;
+}
+#hud kbd {
+  padding: 0 3px;
+  font-size: 10px;
+}
+#hud input {
+  flex: 1;
+  min-width: 0;
+  accent-color: #4ade80;
+}
+#hud span {
+  font-variant-numeric: tabular-nums;
+}

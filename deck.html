@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Uno · Deck</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <div id="pile"></div>
+    <div id="hint">Press <kbd>Space</kbd> to flip</div>
+    <div id="draw">
+      <div class="stack"><img src="/cards/back.svg" alt="" draggable="false" /></div>
+      <div id="draw-count">108</div>
+    </div>
+    <div id="hud">
+      <div class="row"><b id="h-mode">single</b><span id="h-left"></span></div>
+      <div class="row">
+        <span id="h-auto">auto off</span>
+        <input id="speed" type="range" min="200" max="3000" step="50" />
+        <span id="h-ms"></span>
+      </div>
+      <div class="row dim"><span id="h-legal"></span><span id="h-peers"></span></div>
+      <div class="keys">
+        <kbd>Space</kbd> flip · <kbd>←</kbd> undo · <kbd>A</kbd> auto · <kbd>[</kbd><kbd>]</kbd> speed ·
+        <kbd>S</kbd> shuffle · <kbd>L</kbd> legal · <kbd>M</kbd> mode · <kbd>H</kbd> hide
+      </div>
+    </div>
+    <script type="module" src="/src/deck/main.ts"></script>
+  </body>
+</html>
