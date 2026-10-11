@@ -39,6 +39,14 @@ function relay(): Plugin {
           });
         });
       });
+      // ORT dynamically imports its .mjs glue from /ort/; Vite refuses imports from /public in dev, so serve raw.
+      server.middlewares.use('/ort', (req, res, next) => {
+        const file = resolve(__dirname, 'public/ort', (req.url ?? '').split('?')[0].replace(/^\/+/, ''));
+        if (!file.startsWith(resolve(__dirname, 'public/ort')) || !existsSync(file)) return next();
+        res.setHeader('content-type', file.endsWith('.wasm') ? 'application/wasm' : 'text/javascript');
+        res.setHeader('cross-origin-resource-policy', 'same-origin');
+        res.end(readFileSync(file));
+      });
       server.middlewares.use('/api/info', (_req, res) => {
         const port = server.config.server.port ?? 5173;
         res.setHeader('content-type', 'application/json');
