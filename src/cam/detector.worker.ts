@@ -9,7 +9,8 @@ const MAX_DETS = 20;
 const post = (m: FromWorker) => postMessage(m);
 
 ort.env.wasm.wasmPaths = '/ort/';
-ort.env.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1;
+// Already off the main thread; ORT's nested pthread workers hang under Vite dev + WebKit, so stay single-threaded.
+ort.env.wasm.numThreads = 1;
 
 let session: ort.InferenceSession;
 let meta: ModelMeta;
@@ -24,9 +25,16 @@ async function create(buf: ArrayBuffer, ep: 'auto' | 'webgpu' | 'wasm') {
   let lastErr: unknown;
   for (const name of tryEps) {
     try {
-      session = await ort.InferenceSession.create(buf, { executionProviders: [name], graphOptimizationLevel: 'all' });
-      backend = name;
-      await run(); // warm-up: compiles shaders / allocates; proves the backend really works
+      // iOS WebGPU can hang instead of throwing; give up after a while and fall back.
+      const timeout = new Promise<never>((_, rej) => setTimeout(() => rej(new Error(`${name} init timed out`)), 10_000));
+      await Promise.race([
+        (async () => {
+          session = await ort.InferenceSession.create(buf, { executionProviders: [name], graphOptimizationLevel: 'all' });
+          backend = name;
+          await run(); // warm-up: compiles shaders / allocates; proves the backend really works
+        })(),
+        timeout,
+      ]);
       return;
     } catch (e) {
       lastErr = e;
