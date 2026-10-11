@@ -21,7 +21,7 @@ CANDIDATES = {
     "n256_noft": (BASE, 256, 0),  # same weights, smaller input
     "n256": (BASE, 256, 5),  # fine-tuned at 256
     "n224": (BASE, 224, 5),  # fine-tuned at 224
-    "pico256": (ML / "cfg" / "yolo26n-pico.yaml", 256, 20),  # half-width model from scratch
+    # "pico256": (ML / "cfg" / "yolo26n-pico.yaml", 256, 20),  # half-width model from scratch  # dropped: 0.08 mAP50-95 after 9 epochs from scratch
 }
 
 

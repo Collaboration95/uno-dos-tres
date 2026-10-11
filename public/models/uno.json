@@ -1,11 +1,11 @@
 {
-  "imgsz": 320,
+  "imgsz": 256,
   "arch": "yolo26n",
   "output": "raw",
   "outputShape": [
     1,
     58,
-    2100
+    1344
   ],
   "classes": [
     "red_0",
