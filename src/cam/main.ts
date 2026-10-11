@@ -7,6 +7,10 @@ import type { CropDet, FromWorker, ToWorker } from './types';
 const MIRROR_W = 480;
 const MIRROR_MS = 1000 / 12;
 const JPEG_Q = 0.6;
+// Thermal budget: Uno needs ~10 fps, not "as fast as the GPU can go". Drop to idle rate when nothing changes.
+const ACTIVE_FPS = Number(new URLSearchParams(location.search).get('fps') ?? 12);
+const IDLE_FPS = 4;
+const IDLE_AFTER_MS = 1500;
 const params = new URLSearchParams(location.search);
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -69,7 +73,7 @@ async function start() {
   startBtn.hidden = true;
   try {
     video.srcObject = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
+      video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 30, max: 30 } },
       audio: false,
     });
     await video.play();
@@ -123,7 +127,8 @@ function onFrame() {
   const mirrorDue = !encoding && now - lastMirror >= MIRROR_MS && relay.open && hosts > 0;
 
   if (ready) {
-    if (busy) return;
+    if (busy || now - lastSubmit < 1000 / (now - lastChange > IDLE_AFTER_MS ? IDLE_FPS : ACTIVE_FPS)) return;
+    lastSubmit = now;
     busy = true;
     ++seq;
     if (mirrorDue) startEncode(seq, now);
@@ -139,6 +144,9 @@ function onFrame() {
   }
 }
 
+let lastSubmit = 0;
+let lastChange = 0; // last time the best detection changed
+let lastBest = -2;
 let jpegDone: ((b: Blob) => void) | null = null;
 
 async function submit(s: number, t0: number, vw: number, vh: number) {
@@ -200,6 +208,10 @@ function onResult(m: Extract<FromWorker, { type: 'result' }>) {
   // Live "what I see right now": best detection, independent of the tracker's commit.
   const best = dets.filter((d) => d.cls < CARDS.length).sort((a, b) => b.conf - a.conf)[0];
   const card = best && CARDS[best.cls];
+  if ((best?.cls ?? -1) !== lastBest) {
+    lastBest = best?.cls ?? -1;
+    lastChange = t;
+  }
   nowEl.textContent = card ? `${label(card)}  ${Math.round(best.conf * 100)}%` : '';
   nowEl.style.color = card?.color ? COLOR_HEX[card.color] : '#fff';
 
